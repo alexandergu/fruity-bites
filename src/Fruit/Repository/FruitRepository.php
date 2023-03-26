@@ -7,7 +7,9 @@ namespace App\Fruit\Repository;
 use App\Fruit\Entity\Fruit;
 use App\Fruit\Filter\FruitListFilterInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Throwable;
 
 /**
  * Fruit repository
@@ -34,7 +36,53 @@ class FruitRepository extends ServiceEntityRepository implements FruitRepository
     public function getCollection(FruitListFilterInterface $filter): array
     {
         $qb = $this->createQueryBuilder('p');
+        $this->applyCollectionFilters($qb, $filter);
 
+        return $qb->getQuery()->execute();
+    }
+
+    /**
+     * Returns a counts of fruits
+     *
+     * @param FruitListFilterInterface $filter
+     *
+     * @return int
+     *
+     * @throws Throwable
+     */
+    public function getTotal(FruitListFilterInterface $filter): int
+    {
+        $qb = $this->createQueryBuilder('p');
+        $qb->select($qb->expr()->count('p.id'));
+        $this->applyCollectionFilters($qb, $filter);
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Saves the fruit
+     *
+     * @param Fruit $fruit
+     *
+     * @return void
+     */
+    public function save(Fruit $fruit): void
+    {
+        $em = $this->getEntityManager();
+        $em->persist($fruit);
+        $em->flush();
+    }
+
+    /**
+     * Applies collection filters for query
+     *
+     * @param QueryBuilder             $qb
+     * @param FruitListFilterInterface $filter
+     *
+     * @return void
+     */
+    private function applyCollectionFilters(QueryBuilder $qb, FruitListFilterInterface $filter)
+    {
         if ($limit = $filter->getLimit()) {
             $qb->setMaxResults($limit);
         }
@@ -54,21 +102,5 @@ class FruitRepository extends ServiceEntityRepository implements FruitRepository
                 ->andWhere($qb->expr()->eq('p.name', ':name'))
                 ->setParameter('name', $name);
         }
-
-        return $qb->getQuery()->execute();
-    }
-
-    /**
-     * Saves the fruit
-     *
-     * @param Fruit $fruit
-     *
-     * @return void
-     */
-    public function save(Fruit $fruit): void
-    {
-        $em = $this->getEntityManager();
-        $em->persist($fruit);
-        $em->flush();
     }
 }

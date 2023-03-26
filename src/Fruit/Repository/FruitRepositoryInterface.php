@@ -22,6 +22,15 @@ interface FruitRepositoryInterface
     public function getCollection(FruitListFilterInterface $filter): array;
 
     /**
+     * Returns a counts of fruits
+     *
+     * @param FruitListFilterInterface $filter
+     *
+     * @return int
+     */
+    public function getTotal(FruitListFilterInterface $filter): int;
+
+    /**
      * Saves the fruit
      *
      * @param Fruit $fruit

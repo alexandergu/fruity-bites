@@ -36,6 +36,18 @@ class FruitService implements FruitServiceInterface
     }
 
     /**
+     * Returns a counts of fruits
+     *
+     * @param FruitListFilterInterface $filter
+     *
+     * @return int
+     */
+    public function getTotal(FruitListFilterInterface $filter): int
+    {
+        return $this->fruitRepository->getTotal($filter);
+    }
+
+    /**
      * Creates the fruit
      *
      * @param FruitData $data

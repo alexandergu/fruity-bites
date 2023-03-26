@@ -45,6 +45,18 @@ class FruitViceService implements FruitServiceInterface
     }
 
     /**
+     * Returns a counts of fruits
+     *
+     * @param FruitListFilterInterface $filter
+     *
+     * @return int
+     */
+    public function getTotal(FruitListFilterInterface $filter): int
+    {
+        throw new RuntimeException('There is no implementation available.');
+    }
+
+    /**
      * Creates the fruit
      *
      * @param FruitData $data
