@@ -1,0 +1,65 @@
+version: "3.4"
+
+services:
+    db:
+        image: mysql:5.7
+        environment:
+            MYSQL_DATABASE: fruity-bites
+            MYSQL_USER: fruity
+            MYSQL_PASSWORD: fruity
+            MYSQL_ROOT_PASSWORD: fruity
+
+    fpm:
+        build:
+            context: .
+            target: app_php
+        restart: unless-stopped
+        environment:
+            APP_ENV: dev
+            DATABASE_URL: mysql://fruity:fruity@db:3306/fruity-bites?serverVersion=5.7
+        volumes:
+            - ./:/srv/app
+        depends_on:
+            - db
+        healthcheck:
+            interval: 10s
+            timeout: 3s
+            retries: 3
+            start_period: 30s
+
+    nginx:
+        build:
+            context: .
+            target: nginx
+        environment:
+            PHP_FPM_UPSTREAM: fpm:9000
+        depends_on:
+            - fpm
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.nginx.entrypoints=http
+            - traefik.http.routers.nginx.rule=Host(`fruity.localhost`)
+            - traefik.http.routers.nginx.priority=1
+        volumes:
+            - ./public:/srv/app/public
+
+    adminer:
+        image: adminer
+        restart: always
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.pma.entrypoints=http
+            - traefik.http.routers.pma.rule=Host(`adminer.localhost`)
+
+    traefik:
+        image: traefik:2.9
+        command:
+            - --api.insecure=true
+            - --providers.docker=true
+            - --providers.docker.exposedbydefault=false
+            - --entrypoints.http.address=:80
+        ports:
+            - 80:80
+            - 8080:8080
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
