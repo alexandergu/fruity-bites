@@ -48,31 +48,38 @@ class FruitSeedCommand extends Command
         $filter = new FruitListFilter();
         $list = $this->externalService->getCollection($filter);
 
-        $failedCount = 0;
-        $succeed     = [];
+        $output->writeln(sprintf('Received %s fruits.', count($list)));
+
+        $invalid       = 0;
+        $processFruits = [];
 
         foreach ($list as $fruit) {
             $fruitData = new FruitData($fruit);
             $errors = $this->validator->validate($fruitData);
 
             if (count($errors) > 0) {
-                $failedCount++;
+                $invalid++;
             }
 
-            $succeed[] = $fruitData;
+            $processFruits[] = $fruitData;
         }
 
-        foreach ($succeed as $fruit) {
+        $output->writeln(sprintf('From the received fruits %s are invalid.', $invalid));
+
+        $saved  = 0;
+        $failed = 0;
+
+        foreach ($processFruits as $fruit) {
             try {
                 $this->internalService->create($fruit);
+                $saved++;
             } catch (Throwable $exception) {
-                $failedCount++;
+                $failed++;
             }
         }
 
-        $output->writeln(
-            sprintf('Success: %d, failed: %d', 0, $failedCount)
-        );
+        $output->writeln('Command executed successfully.');
+        $output->writeln(sprintf('Successfully added %s fruits. With %s fruits failed to add.', $saved, $failed));
 
         return 1;
     }
