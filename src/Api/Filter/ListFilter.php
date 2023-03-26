@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Api\Filter;
 
+use Symfony\Component\Validator\Constraints\PositiveOrZero;
+
 /**
  * List filter
  */
@@ -14,6 +16,7 @@ class ListFilter implements ListFilterInterface
      *
      * @var int
      */
+    #[PositiveOrZero]
     protected int $limit;
 
     /**
@@ -21,6 +24,7 @@ class ListFilter implements ListFilterInterface
      *
      * @var int
      */
+    #[PositiveOrZero]
     protected int $offset;
 
     /**

@@ -33,7 +33,29 @@ class FruitRepository extends ServiceEntityRepository implements FruitRepository
      */
     public function getCollection(FruitListFilterInterface $filter): array
     {
-        return $this->findAll();
+        $qb = $this->createQueryBuilder('p');
+
+        if ($limit = $filter->getLimit()) {
+            $qb->setMaxResults($limit);
+        }
+
+        if ($offset = $filter->getOffset()) {
+            $qb->setFirstResult($offset);
+        }
+
+        if ($family = $filter->getFamily()) {
+            $qb
+                ->andWhere($qb->expr()->eq('p.family', ':family'))
+                ->setParameter('family', $family);
+        }
+
+        if ($name = $filter->getName()) {
+            $qb
+                ->andWhere($qb->expr()->eq('p.name', ':name'))
+                ->setParameter('name', $name);
+        }
+
+        return $qb->getQuery()->execute();
     }
 
     /**
@@ -49,5 +71,4 @@ class FruitRepository extends ServiceEntityRepository implements FruitRepository
         $em->persist($fruit);
         $em->flush();
     }
-
 }

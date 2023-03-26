@@ -6,6 +6,7 @@ namespace App\Fruit\Filter;
 
 use App\Api\Filter\ListFilter;
 use App\Api\Filter\QueryFilterResolverInterface;
+use Symfony\Component\Validator\Constraints\Length;
 
 /**
  * Fruit list filter
@@ -17,6 +18,7 @@ class FruitListFilter extends ListFilter implements FruitListFilterInterface, Qu
      *
      * @var string
      */
+    #[Length(max: 255)]
     protected string $family;
 
     /**
@@ -24,6 +26,7 @@ class FruitListFilter extends ListFilter implements FruitListFilterInterface, Qu
      *
      * @var string
      */
+    #[Length(max: 255)]
     protected string $name;
 
     /**
