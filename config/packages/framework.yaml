@@ -18,6 +18,11 @@ framework:
     php_errors:
         log: true
 
+    http_client:
+        scoped_clients:
+            fruityvice.client:
+                base_uri: 'https://fruityvice.com'
+
 when@test:
     framework:
         test: true

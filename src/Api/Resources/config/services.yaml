@@ -1,0 +1,15 @@
+parameters:
+
+services:
+    _defaults:
+        autoconfigure: true
+        autowire: true
+
+    # Services
+    App\Api\:
+        resource: '../../{ValueResolver}'
+
+    # Resolver query-filters
+    App\Api\ValueResolver\QueryFilterResolver:
+        tags:
+            - { name: controller.argument_value_resolver, priority: 150 }

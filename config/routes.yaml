@@ -1,5 +1,2 @@
-controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
-    type: attribute
+fruit:
+    resource: '@FruitBundle/Resources/config/routes.yaml'

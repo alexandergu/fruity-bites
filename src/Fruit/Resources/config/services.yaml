@@ -1,0 +1,30 @@
+parameters:
+
+services:
+    _defaults:
+        autoconfigure: true
+        autowire: true
+
+    # Controllers
+    App\Fruit\Controller\:
+        resource: '../../Controller'
+        tags: ['controller.service_arguments']
+
+    # Services
+    App\Fruit\:
+        resource: '../../{Command,Repository,Form,Service,Validator,View,Voter}'
+
+    # Fruit service implementation
+    App\Fruit\Service\FruitServiceInterface:
+        class: App\Fruit\Service\FruitService
+
+    # FruitVice service
+    App\Fruit\Service\FruitViceService:
+        arguments:
+            - '@fruityvice.client'
+
+    # Command for fetching and storing fruit data
+    App\Fruit\Command\FruitSeedCommand:
+        arguments:
+            - '@App\Fruit\Service\FruitViceService'
+            - '@App\Fruit\Service\FruitService'
