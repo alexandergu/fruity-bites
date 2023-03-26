@@ -8,6 +8,7 @@ use App\Fruit\Entity\Fruit;
 use App\Fruit\Entity\FruitNutrition;
 use App\Fruit\Filter\FruitListFilter;
 use App\Fruit\Service\FruitServiceInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -42,6 +43,19 @@ class FruitController extends AbstractController
         return $this->json(
             $this->getCollectionView($collection, $total),
         );
+    }
+
+    /**
+     * Returns a fruit
+     *
+     * @param Fruit $fruit
+     *
+     * @return Response
+     */
+    #[Route('/{id}', name: 'fruit:one')]
+    public function getOne(#[MapEntity(id: 'id')] Fruit $fruit): Response
+    {
+        return $this->json($this->getFruitView($fruit));
     }
 
     /**
